@@ -99,10 +99,11 @@ app.post("/urls/:id", (req, res) => {
   console.log("req.body", req.body);
   //everything you send in a form is sent thru req.body
   //the shortURL comes from req.params.id -- comes from the URL -- substiute for :id
-  const newLongUrl = req.body.longUrl;
+  const newLongUrl = req.body.longURL;
   const shortURL = req.params.id;
   //console.log("req.params", req.params);
   urlDatabase[shortURL] = newLongUrl; //trying to change longUrl value of a specific key
+  res.redirect("/urls");
 });
 
 /*************************************************/
