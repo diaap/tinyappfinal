@@ -18,7 +18,10 @@ function generateRandomString() {
 console.log(generateRandomString());
 
 var express = require("express");
+var cookieParser = require('cookie-parser')
+
 var app = express();
+app.use(cookieParser())
 var PORT = process.env.PORT || 8080; // default port 8080
 
 const bodyParser = require("body-parser");
