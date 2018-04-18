@@ -13,15 +13,21 @@
                 <ul>
                 <% for (var key in urls) { %>
                   <li><%= key %> <%= urls[key] %></li>
+                    <form method="POST" action="/urls/<%= key %>/delete">
+                      <input type="submit" value="Delete">
+                      <a href="/urls/<%= key %>"> Edit </a>
+                    </form>
                     <% } %>
                   </ul>
                 </p>
-                <a href = "#"> Shorten a new URL </a>
-          </body>
+                <a href = "urls/new"> Want to Shorten a new URL? </a>
+            </body>
           </html>
 
 <!--
 Using EJS and HTML, code your urls_index.ejs file to display the following:
 A list or table of the URLs and their shortened forms.
 A link for shortening a new URL (this will be a dead link for now, that is it doesn't need to go anywhere since you'll be building its functionality later
+
+within action - how you get the short url
 -->
