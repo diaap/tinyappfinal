@@ -3,8 +3,12 @@
   </nav>
     <head></head>
     <body style="padding:0px;">
+      <% if(!user) { %>
       <a href="/register/<%= key %>"> Register </a>
+      <% } else { %>
       <a href="/login/<%= key %>"> Login </a>
+
+      <%}%>
     </body>
 
 

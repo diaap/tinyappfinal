@@ -11,14 +11,14 @@ const users = {
   }
 }
 
-function checkLogin (username, password) {
+function checkLogin (useremail, password) {
   for (let userId in users) {
-    if (username === users[userId].username &&
+    if (useremail === users[userId].email &&
       password === users[userId].password) {
         return users[userId];
     }
   }
-  return {};
+  return false;
 }
 
 const alphanum = "abcdefghijkmnopqrstuvwxyz1234567890";
@@ -84,9 +84,6 @@ app.post("/register", (req, res) => { //post is whenever you submit the form
     email: req.body.email,
     password: req.body.password,
   };
-  //if email is empty string & if password is empty string or either or is empty string = 400 error
-  //we're just checking if the field is empty
-  //username = req.body.email, req.body.password
 
 
   if (req.body.email === "" || req.body.password === "") {
@@ -100,10 +97,7 @@ app.post("/register", (req, res) => { //post is whenever you submit the form
 })
 
 
-app.post("/login", (req, res) => {
-  const user = checkLogin(req.body.email, req.body.password);
 
-});
 
 
 app.get("/login", (req, res) => {
@@ -126,7 +120,7 @@ app.get("/login", (req, res) => {
 app.get("/urls", (req, res) => {
   //inside this function urldatabase is visible -- index.ejs is invisible the only way to make data visible is to use the templateVars
   //templateVars transmits data to url index
-  let userId = res.cookie('user_id');
+  let userId = res.cookie['user_id'];
   let templateVars = {
     urls: urlDatabase,
     user: users[req.cookies.userId]
@@ -191,23 +185,31 @@ app.post("/urls/:id", (req, res) => {
 app.post("/login", (req, res) => {
   var loginEmail = req.body.email;
   var loginPassword = req.body.password;
+  const userLogin = checkLogin(loginEmail, loginPassword);
+  //userlogin can be an object or it can be false
 
-  for (const userId in users) {
-    if (req.body.email === users[userId].email) { //then you check for the password because the password you enter into req.body has to equal
-      if (req.body.password === users[userId].password) {
-        res.cookie('user_id', users[randomId].id);
-        res.redirect('/urls');
-      } else {
-        //res.render('/urls')//
-        res.send("wrong password");
-      }
-    }
+  if (userLogin) {
+    res.cookie('user_id', userLogin.id);
+    res.redirect('/urls/');
+  } else {
+    res.status(403);
+    res.send("you have the wrong credentials");
   }
-  res.send("wrong e-mail");
+
+  // app.post("/login", (req, res) => {
+//   const user = checkLogin(req.body.email, req.body.password);
+
+// });
+
+  console.log("userLogin", userLogin);
+
+
 });
 
+/*----------------------------------------------*/
+
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect("/urls");
 });
 
