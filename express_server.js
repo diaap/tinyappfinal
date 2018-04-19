@@ -1,3 +1,16 @@
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+}
+
 const alphanum = "abcdefghijkmnopqrstuvwxyz1234567890";
 
 function generateRandomString() {
@@ -22,7 +35,6 @@ var cookieParser = require('cookie-parser')
 var app = express();
 app.use(cookieParser())
 var PORT = process.env.PORT || 8080; // default port 8080
-
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -44,11 +56,36 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+
+app.get("/register", (req, res) => {
+  //let templateVars = { username: req.cookies["username"]}
+  res.render("register");
+});
+
+app.post("/register", (req, res) => { //post is whenever you submit the form
+  //add a new user
+  let randomId = generateRandomString();
+  users[randomId] = {
+    id: generateRandomString(),
+    email: req.body.email,
+    password: req.body.password
+  }
+
+  res.cookie('user_id', users[randomId].id);
+  res.redirect('/urls');
+  console.log(users);
+
+})
+
+
+
 // any get route has a req response it renders an ejs file - it does not have access to anything in terms of variables - ejs files only have access to variables in the route that's rendering it
 //any form in ejs file, if it had a form in ejs file, it should be the get method to this
 //localhost:3000/urls/ pattern is recognized! how the browser knows what to do
 //when it finds the match - itll execute the index.ejs - itll read the content of html but execute the JS in there and it will output a final HTML -- index.html
 //then itll send index back to the browser to be displayed - and then it waits for another request
+
+
 
 app.get("/urls", (req, res) => {
   //inside this function urldatabase is visible -- index.ejs is invisible the only way to make data visible is to use the templateVars
@@ -126,6 +163,7 @@ app.post("/logout", (req, res) => {
 app.get("/hello", (req, res) => {
   res.end("<html><body>Hello <b>World</b></body></html>\n");
 });
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
