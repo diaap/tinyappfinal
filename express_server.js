@@ -54,9 +54,12 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
   //inside this function urldatabase is visible -- index.ejs is invisible the only way to make data visible is to use the templateVars
   //templateVars transmits data to url index
-  let templateVars = { urls: urlDatabase };
+  let templateVars = {
+    urls: urlDatabase,
+    username: req.cookies["username"]
+    };
   //the value of urlDatabase links to the var -- now url index can access its value
-  console.log(templateVars);
+  //console.log(templateVars);
   //render means execute the page, the JS and create the final html with it
   res.render("urls_index", templateVars);
 });
@@ -108,7 +111,12 @@ app.post("/urls/:id", (req, res) => {
 
 app.post("/login", (req, res) => {
   var userName = req.body.login;
-  res.cookie('userName', req.body.login);
+  res.cookie('username', userName);
+  res.redirect("/urls");
+});
+
+app.post("/logout", (req, res) => {
+  res.clearCookie('username');
   res.redirect("/urls");
 });
 
