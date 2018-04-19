@@ -65,17 +65,57 @@ app.get("/register", (req, res) => {
 app.post("/register", (req, res) => { //post is whenever you submit the form
   //add a new user
   let randomId = generateRandomString();
+
   users[randomId] = {
-    id: generateRandomString(),
+    id: randomId,
     email: req.body.email,
-    password: req.body.password
+    password: req.body.password,
+  };
+  //if email is empty string & if password is empty string or either or is empty string = 400 error
+  //we're just checking if the field is empty
+  if (req.body.email === "" || req.body.password === "") {
+    res.status(400);
+    res.send("please enter an e-mail and password");
   }
 
   res.cookie('user_id', users[randomId].id);
   res.redirect('/urls');
   console.log(users);
-
 })
+
+
+app.get("/login", (req, res) => {
+  //let templateVars = { username: req.cookies["username"]}
+  res.render("login");
+});
+
+app.post("/login", (req, res) => { //post is whenever you submit the form
+  //add a new user
+  // let randomId = generateRandomString();
+
+  // users[randomId] = {
+  //   id: randomId,
+  //   email: req.body.email,
+  //   password: req.body.password,
+  // };
+  // //if email is empty string & if password is empty string or either or is empty string = 400 error
+  // //we're just checking if the field is empty
+  // if (req.body.email === "" || req.body.password === "") {
+  //   res.status(400);
+  //   res.send("please enter an e-mail and password");
+  // }
+
+  // res.cookie('user_id', users[randomId].id);
+  // res.redirect('/urls');
+  // console.log(users);
+})
+
+//lets check if a users email already exists:
+//loop over the users (for in statement), compare emails, if they ever are the same, send another error message
+//if the condition never satisfies that means its ok, you can add the user in the database
+
+ //create a variable that points to an e-mail in the req.body
+ //create a variable empty string
 
 
 
@@ -90,10 +130,12 @@ app.post("/register", (req, res) => { //post is whenever you submit the form
 app.get("/urls", (req, res) => {
   //inside this function urldatabase is visible -- index.ejs is invisible the only way to make data visible is to use the templateVars
   //templateVars transmits data to url index
+  let userId = res.cookie('user_id');
   let templateVars = {
     urls: urlDatabase,
-    username: req.cookies["username"]
+    user: users[userId]
     };
+
   //the value of urlDatabase links to the var -- now url index can access its value
   //console.log(templateVars);
   //render means execute the page, the JS and create the final html with it
@@ -113,12 +155,14 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  let templateVars = { username: req.cookies["username"]}
+  let userId = res.cookie('user_id');
+  let templateVars = { user: users[userId] };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
   console.log(req.params);
+  //let userId = res.cookie('user_id');
   let templateVars = { shortURL: req.params.id, longURL: urlDatabase[req.params.id] || "not found",
                        username: req.cookies["username"]};
   res.render("urls_show", templateVars);
@@ -149,9 +193,21 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  var bodyUserName = req.body.login;
-  res.cookie('username', bodyUserName);
-  res.redirect("/urls");
+  var loginEmail = req.body.email;
+  var loginPassword = req.body.password;
+
+  for (const userId in users) {
+    if (req.body.email === users[userId].email) { //then you check for the password because the password you enter into req.body has to equal
+      if (req.body.password === users[userId].password) {
+        res.cookie('user_id', users[randomId].id);
+        res.redirect('/urls');
+      } else {
+        //res.render('/urls')//
+        res.send("wrong password");
+      }
+    }
+  }
+  res.send("wrong e-mail");
 });
 
 app.post("/logout", (req, res) => {

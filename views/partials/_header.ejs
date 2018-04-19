@@ -1,15 +1,16 @@
   <nav>
-    <h1 style="color: red; font-size: 40px;"> Tiny App </h1>
+    <h1 style="color: blue; font-size: 30px;"> Tiny App </h1>
   </nav>
     <head></head>
-    <body style="font-size:20px; padding:50px;">
-    <%if (username) { %>
-      <%= username %>
+    <body style="padding:0px;">
+    <%if (user) { %>
+      <%= user.id %>
       <form method="POST" action="/logout">
       <button type="submit">Logout</button> </form>
     <% } else { %>
       <form method="POST" action="/login">
-      <input name="login" id="login" type="text" placeholder="Enter your username">
+      <input type="text" placeholder="Enter Email" name="email">
+      <input type="password" placeholder="Enter Password" name="password">
       <button type="submit">Login</button>
   </form>
   </body>
