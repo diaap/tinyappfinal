@@ -11,6 +11,16 @@ const users = {
   }
 }
 
+function checkLogin (username, password) {
+  for (let userId in users) {
+    if (username === users[userId].username &&
+      password === users[userId].password) {
+        return users[userId];
+    }
+  }
+  return {};
+}
+
 const alphanum = "abcdefghijkmnopqrstuvwxyz1234567890";
 
 function generateRandomString() {
@@ -58,8 +68,11 @@ app.get("/urls.json", (req, res) => {
 
 
 app.get("/register", (req, res) => {
-  //let templateVars = { username: req.cookies["username"]}
-  res.render("register");
+  let templateVars = {
+    urls: urlDatabase,
+    user: users[req.cookies.userId]
+    };
+  res.render("register", templateVars);
 });
 
 app.post("/register", (req, res) => { //post is whenever you submit the form
@@ -73,6 +86,9 @@ app.post("/register", (req, res) => { //post is whenever you submit the form
   };
   //if email is empty string & if password is empty string or either or is empty string = 400 error
   //we're just checking if the field is empty
+  //username = req.body.email, req.body.password
+
+
   if (req.body.email === "" || req.body.password === "") {
     res.status(400);
     res.send("please enter an e-mail and password");
@@ -84,39 +100,19 @@ app.post("/register", (req, res) => { //post is whenever you submit the form
 })
 
 
-app.get("/login", (req, res) => {
-  //let templateVars = { username: req.cookies["username"]}
-  res.render("login");
+app.post("/login", (req, res) => {
+  const user = checkLogin(req.body.email, req.body.password);
+
 });
 
-app.post("/login", (req, res) => { //post is whenever you submit the form
-  //add a new user
-  // let randomId = generateRandomString();
 
-  // users[randomId] = {
-  //   id: randomId,
-  //   email: req.body.email,
-  //   password: req.body.password,
-  // };
-  // //if email is empty string & if password is empty string or either or is empty string = 400 error
-  // //we're just checking if the field is empty
-  // if (req.body.email === "" || req.body.password === "") {
-  //   res.status(400);
-  //   res.send("please enter an e-mail and password");
-  // }
-
-  // res.cookie('user_id', users[randomId].id);
-  // res.redirect('/urls');
-  // console.log(users);
-})
-
-//lets check if a users email already exists:
-//loop over the users (for in statement), compare emails, if they ever are the same, send another error message
-//if the condition never satisfies that means its ok, you can add the user in the database
-
- //create a variable that points to an e-mail in the req.body
- //create a variable empty string
-
+app.get("/login", (req, res) => {
+  let templateVars = {
+    urls: urlDatabase,
+    user: users[req.cookies.userId]
+    };
+  res.render('login', templateVars);
+});
 
 
 // any get route has a req response it renders an ejs file - it does not have access to anything in terms of variables - ejs files only have access to variables in the route that's rendering it
@@ -133,7 +129,7 @@ app.get("/urls", (req, res) => {
   let userId = res.cookie('user_id');
   let templateVars = {
     urls: urlDatabase,
-    user: users[userId]
+    user: users[req.cookies.userId]
     };
 
   //the value of urlDatabase links to the var -- now url index can access its value
@@ -156,7 +152,7 @@ app.post("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   let userId = res.cookie('user_id');
-  let templateVars = { user: users[userId] };
+  let templateVars = { user: users[req.cookies.userId] };
   res.render("urls_new", templateVars);
 });
 
@@ -164,12 +160,12 @@ app.get("/urls/:id", (req, res) => {
   console.log(req.params);
   //let userId = res.cookie('user_id');
   let templateVars = { shortURL: req.params.id, longURL: urlDatabase[req.params.id] || "not found",
-                       username: req.cookies["username"]};
+                       user: req.cookies[req.cookies.userId]};
   res.render("urls_show", templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  let templateVars = { username: req.cookies["username"]}
+  let templateVars = { user: req.cookies[req.cookies.userId]}
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
   res.redirect(longURL);

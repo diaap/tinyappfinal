@@ -3,17 +3,9 @@
   </nav>
     <head></head>
     <body style="padding:0px;">
-    <%if (user) { %>
-      <%= user.id %>
-      <form method="POST" action="/logout">
-      <button type="submit">Logout</button> </form>
-    <% } else { %>
-      <form method="POST" action="/login">
-      <input type="text" placeholder="Enter Email" name="email">
-      <input type="password" placeholder="Enter Password" name="password">
-      <button type="submit">Login</button>
-  </form>
-  </body>
-    <% } %>
+      <a href="/register/<%= key %>"> Register </a>
+      <a href="/login/<%= key %>"> Login </a>
+    </body>
+
 
 
