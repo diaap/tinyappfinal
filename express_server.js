@@ -77,16 +77,19 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = { username: req.cookies["username"]}
+  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
   console.log(req.params);
-  let templateVars = { shortURL: req.params.id, longURL: urlDatabase[req.params.id] || "not found" };
+  let templateVars = { shortURL: req.params.id, longURL: urlDatabase[req.params.id] || "not found",
+                       username: req.cookies["username"]};
   res.render("urls_show", templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
+  let templateVars = { username: req.cookies["username"]}
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
   res.redirect(longURL);
@@ -110,8 +113,8 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  var userName = req.body.login;
-  res.cookie('username', userName);
+  var bodyUserName = req.body.login;
+  res.cookie('username', bodyUserName);
   res.redirect("/urls");
 });
 
