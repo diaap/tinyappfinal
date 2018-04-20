@@ -11,16 +11,19 @@
                 <ul>
                 <% for (var key in urls) { %>
                   <li><%= key %> <%= urls[key].url %></li>
-                  <% if (urls[key].linkid === user.id) { %>
+
+                    <% if (user && urls[key].linkid === user.id) { %>
+
                     <form method="POST" action="/urls/<%= key %>/delete">
                       <input type="submit" value="Delete">
                       <a href="/urls/<%= key %>"> Edit </a>
                     </form>
+
                     <% } %>
                     <% } %>
                   </ul>
                 </p>
-                <a href = "urls/new"> Want to shorten a new URL? </a>
+                <a href = "/urls/new"> Want to shorten a new URL? </a>
             </body>
           </html>
 

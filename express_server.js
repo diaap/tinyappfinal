@@ -43,6 +43,22 @@ function generateRandomString() {
 /* I like to see this console log logged in my terminal so i keep it here*/
 console.log(generateRandomString());
 
+
+function urlsForUser(loggedInId) {
+  let subset = {};
+  for (let url in urlDatabase) {
+    console.log('URLLLLL', urlDatabase[url]);
+          console.log('LOOOOOGGGEEDINID', loggedInId);
+
+    if (urlDatabase[url].linkid === loggedInId) {
+      console.log(loggedInId);
+      subset[url] = urlDatabase[url];
+    }
+  }
+  return subset;
+};
+
+// id should be the cookie
 /* I'm setting up my application*/
 
 var express = require("express");
@@ -130,45 +146,28 @@ app.post("/register", (req, res) => { //post is whenever you submit the form
 
 
 
-
-
-// app.get("/login", (req, res) => {
-//   let templateVars = {
-//     urls: urlDatabase,
-//     user: users[req.cookies.userId]
-//     };
-//   res.render('login', templateVars);
-// });
-
-// const currentUsername = req.cookies['username'];
-//   let currentPassword = ""
-//   if (req.cookies['password']) {
-//      currentPassword = req.cookies['password'];
-//   }
-//   if (checkLogin(currentUsername,currentPassword)) {
-//     res.render('treasure', { currentUser: currentUsername });
-//   } else {
-//     res.redirect("login");
-//   }
-// });
-
-
-
 // any get route has a req response it renders an ejs file - it does not have access to anything in terms of variables - ejs files only have access to variables in the route that's rendering it
 //any form in ejs file, if it had a form in ejs file, it should be the get method to this
 //localhost:3000/urls/ pattern is recognized! how the browser knows what to do
 //when it finds the match - itll execute the index.ejs - itll read the content of html but execute the JS in there and it will output a final HTML -- index.html
 //then itll send index back to the browser to be displayed - and then it waits for another request
 
+//////////////////////////////////////////////////////////////////////
+/////////////////////
 app.get("/urls", (req, res) => {
   //inside this function urldatabase is visible -- index.ejs is invisible the only way to make data visible is to use the templateVars
   //templateVars transmits data to url index
-  let userId = res.cookie['user_id'];
+  let userId = req.cookies.user_id;
+  //let urls = urlDatabase.urlsForUser(userId);
   //console.log(userId);
+
   let templateVars = {
     urls: urlDatabase,
     user: users[req.cookies.user_id]
     };
+
+  //console.log('DIAAAAAAAAA', userId);
+  console.log(urlsForUser(userId));
 
   //the value of urlDatabase links to the var -- now url index can access its value
   //console.log(templateVars);
@@ -208,7 +207,7 @@ app.get("/urls/new", (req, res) => {
   let templateVars = { user: users[req.cookies.userId] };
   //console.log(templateVars);
   if (req.cookies.user_id) {
-    console.log("cookie exists");
+    //console.log("cookie exists");
     res.render("urls_new", templateVars);
   } else {
     //console.log("no cookie found");
