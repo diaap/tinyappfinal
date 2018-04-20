@@ -85,7 +85,6 @@ app.post("/register", (req, res) => { //post is whenever you submit the form
     password: req.body.password,
   };
 
-
   if (req.body.email === "" || req.body.password === "") {
     res.status(400);
     res.send("please enter an e-mail and password");
@@ -95,10 +94,6 @@ app.post("/register", (req, res) => { //post is whenever you submit the form
   res.redirect('/urls');
   console.log(users);
 })
-
-
-
-
 
 app.get("/login", (req, res) => {
   let templateVars = {
@@ -124,7 +119,7 @@ app.get("/urls", (req, res) => {
   //console.log(userId);
   let templateVars = {
     urls: urlDatabase,
-    user: users[req.cookies.userId]
+    user: users[req.cookies.user_id]
     };
 
   //the value of urlDatabase links to the var -- now url index can access its value

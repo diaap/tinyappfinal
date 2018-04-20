@@ -1,15 +1,14 @@
   <nav>
     <h1 style="color: blue; font-size: 30px;"> Tiny App </h1>
   </nav>
-    <head></head>
-    <body style="padding:0px;">
+    <header>
       <% if (user) { %>
-      <%= userLogin.id %>
-       <a href="/login/<%= key %>"> Login </a>
+      <%= user.email %>
       <% } else { %>
+      <a href="/login/<%= key %>"> Login </a>
       <a href="/register/<%= key %>"> Register </a>
       <%}%>
-    </body>
+    </header>
 
 
 
