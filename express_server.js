@@ -3,7 +3,7 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+    password: "avocado"
   },
  "user2RandomID": {
     id: "user2RandomID",
@@ -62,9 +62,11 @@ app.set("view engine", "ejs")
 
 //this is my URL database
 var urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+  "b2xVn2": { url: "http://www.lighthouselabs.ca", linkid: "userRandomID" },
+  "9sm5xK": { url: "http://www.google.com", linkid: "user2RandomID" }
+
 };
+
 
 //wherever you see app.get, these are called routes -- you have an interaction between your browser and your server: browser says get me the index page --if you ask for a diff page, you're asking for /urls/show/html -- server needs to know what to do
 //the server will decode the URL pattern - it will try to match it with a route located in your server
@@ -91,7 +93,15 @@ app.get("/register", (req, res) => {
 });
 
 
+app.get("/login", (req, res) => {
+  let userId = res.cookie['user_id'];
 
+  let templateVars = {
+    urls: urlDatabase,
+    user: users[req.cookies.user_id]
+    };
+  res.render('login', templateVars);
+});
 
 
 
@@ -240,12 +250,20 @@ app.get("/u/:shortURL", (req, res) => {
 
 
 
-
+//delete end point
+// edit = post url
 
 //post routes don't render anything
 app.post("/urls/:id/delete", (req, res) => {
-  delete (urlDatabase[req.params.id])
-  res.redirect("/urls");
+  //test if you can log linkid in here - console.log, always put a string before
+  //you need a cookie here too - req.cookies.user_Id
+  //console.log("userDatabase", users, "\n url database", urlDatabase, "\n cookie ", req.cookies.user_id);
+
+    delete (urlDatabase[req.params.id])
+
+
+    //try to register, and delete a link
+res.redirect("/urls");
 });
 
 
