@@ -1,3 +1,4 @@
+/* here is my users database */
 const users = {
   "userRandomID": {
     id: "userRandomID",
@@ -10,7 +11,7 @@ const users = {
     password: "dishwasher-funk"
   }
 }
-
+/* here is my checkLogin function it checks if useremail (server) is equal to useremail (database) */
 function checkLogin (useremail, password) {
   for (let userId in users) {
     if (useremail === users[userId].email &&
@@ -20,6 +21,8 @@ function checkLogin (useremail, password) {
   }
   return false;
 }
+
+/* here is my random generate string */
 
 const alphanum = "abcdefghijkmnopqrstuvwxyz1234567890";
 
@@ -37,20 +40,27 @@ function generateRandomString() {
   return result;
 }
 
+/* I like to see this console log logged in my terminal so i keep it here*/
 console.log(generateRandomString());
+
+/* I'm setting up my application*/
 
 var express = require("express");
 var cookieParser = require('cookie-parser')
 
+// this makes my cookies
 var app = express();
 app.use(cookieParser())
+
 var PORT = process.env.PORT || 8080; // default port 8080
+
+// this is used to parse post requests from forms
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
-//pug is another way of creatin ejs -- signaling that our html will be using ejs inside and the modulo brackets signfy JS
 app.set("view engine", "ejs")
 
+//this is my URL database
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
@@ -58,15 +68,20 @@ var urlDatabase = {
 
 //wherever you see app.get, these are called routes -- you have an interaction between your browser and your server: browser says get me the index page --if you ask for a diff page, you're asking for /urls/show/html -- server needs to know what to do
 //the server will decode the URL pattern - it will try to match it with a route located in your server
+
+//this is my index page that I don't use
+
 app.get("/", (req, res) => {
-  res.end("Hello!");
+  res.send("Hello!");
 });
+
+// this will give me my database in JSON
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-
+// this is my register
 app.get("/register", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
@@ -74,6 +89,11 @@ app.get("/register", (req, res) => {
     };
   res.render("register", templateVars);
 });
+
+
+
+
+
 
 app.post("/register", (req, res) => { //post is whenever you submit the form
   //add a new user
@@ -93,7 +113,14 @@ app.post("/register", (req, res) => { //post is whenever you submit the form
   res.cookie('user_id', users[randomId].id);
   res.redirect('/urls');
   console.log(users);
-})
+});
+
+
+
+
+
+
+
 
 app.get("/login", (req, res) => {
   let templateVars = {
@@ -104,13 +131,13 @@ app.get("/login", (req, res) => {
 });
 
 
+
+
 // any get route has a req response it renders an ejs file - it does not have access to anything in terms of variables - ejs files only have access to variables in the route that's rendering it
 //any form in ejs file, if it had a form in ejs file, it should be the get method to this
 //localhost:3000/urls/ pattern is recognized! how the browser knows what to do
 //when it finds the match - itll execute the index.ejs - itll read the content of html but execute the JS in there and it will output a final HTML -- index.html
 //then itll send index back to the browser to be displayed - and then it waits for another request
-
-
 
 app.get("/urls", (req, res) => {
   //inside this function urldatabase is visible -- index.ejs is invisible the only way to make data visible is to use the templateVars
@@ -128,6 +155,12 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+
+
+
+
+
+
 /**************************************************/
 app.post("/urls", (req, res) => {
 
@@ -140,11 +173,25 @@ app.post("/urls", (req, res) => {
   res.redirect("/urls/" + generatedUrl);
 });
 
+
+
+
+
+
+
+
 app.get("/urls/new", (req, res) => {
   let userId = res.cookie('user_id');
   let templateVars = { user: users[req.cookies.userId] };
   res.render("urls_new", templateVars);
 });
+
+
+
+
+
+
+
 
 app.get("/urls/:id", (req, res) => {
   console.log(req.params);
@@ -154,6 +201,13 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+
+
+
+
+
+
+
 app.get("/u/:shortURL", (req, res) => {
   let templateVars = { user: req.cookies[req.cookies.userId]}
   let shortURL = req.params.shortURL;
@@ -161,11 +215,21 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+
+
+
+
+
 //post routes don't render anything
 app.post("/urls/:id/delete", (req, res) => {
   delete (urlDatabase[req.params.id])
   res.redirect("/urls");
 });
+
+
+
+
+
 
 app.post("/urls/:id", (req, res) => {
   console.log("req.body", req.body);
@@ -178,11 +242,16 @@ app.post("/urls/:id", (req, res) => {
   res.redirect("/urls");
 });
 
+
+
+
+
+
 app.post("/login", (req, res) => {
   var loginEmail = req.body.email;
   var loginPassword = req.body.password;
   const userLogin = checkLogin(loginEmail, loginPassword);
-  //userlogin can be an object or it can be false
+
 
   if (userLogin) {
     res.cookie('user_id', userLogin.id);
@@ -201,16 +270,16 @@ app.post("/login", (req, res) => {
 
 });
 
-/*----------------------------------------------*/
+//this deletes my userID cookies
 
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
   res.redirect("/urls");
 });
 
-/*************************************************/
+
 app.get("/hello", (req, res) => {
-  res.end("<html><body>Hello <b>World</b></body></html>\n");
+  res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
 
@@ -218,5 +287,3 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-
-//when you display a page its always a get
