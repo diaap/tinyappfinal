@@ -3,11 +3,11 @@
   </nav>
     <head></head>
     <body style="padding:0px;">
-      <% if(!user) { %>
-      <a href="/register/<%= key %>"> Register </a>
+      <% if (user) { %>
+      <%= userLogin.id %>
+       <a href="/login/<%= key %>"> Login </a>
       <% } else { %>
-      <a href="/login/<%= key %>"> Login </a>
-
+      <a href="/register/<%= key %>"> Register </a>
       <%}%>
     </body>
 

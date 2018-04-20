@@ -121,6 +121,7 @@ app.get("/urls", (req, res) => {
   //inside this function urldatabase is visible -- index.ejs is invisible the only way to make data visible is to use the templateVars
   //templateVars transmits data to url index
   let userId = res.cookie['user_id'];
+  //console.log(userId);
   let templateVars = {
     urls: urlDatabase,
     user: users[req.cookies.userId]
@@ -202,7 +203,6 @@ app.post("/login", (req, res) => {
 // });
 
   console.log("userLogin", userLogin);
-
 
 });
 
