@@ -56,7 +56,7 @@ var PORT = process.env.PORT || 8080; // default port 8080
 
 // this is used to parse post requests from forms
 const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: true})); //app.use() is middleware
 
 app.set("view engine", "ejs")
 
@@ -112,7 +112,7 @@ app.post("/register", (req, res) => { //post is whenever you submit the form
 
   res.cookie('user_id', users[randomId].id);
   res.redirect('/urls');
-  console.log(users);
+  // console.log(req.cookies);
 });
 
 
@@ -122,14 +122,25 @@ app.post("/register", (req, res) => { //post is whenever you submit the form
 
 
 
-app.get("/login", (req, res) => {
-  let templateVars = {
-    urls: urlDatabase,
-    user: users[req.cookies.userId]
-    };
-  res.render('login', templateVars);
-});
+// app.get("/login", (req, res) => {
+//   let templateVars = {
+//     urls: urlDatabase,
+//     user: users[req.cookies.userId]
+//     };
+//   res.render('login', templateVars);
+// });
 
+// const currentUsername = req.cookies['username'];
+//   let currentPassword = ""
+//   if (req.cookies['password']) {
+//      currentPassword = req.cookies['password'];
+//   }
+//   if (checkLogin(currentUsername,currentPassword)) {
+//     res.render('treasure', { currentUser: currentUsername });
+//   } else {
+//     res.redirect("login");
+//   }
+// });
 
 
 
@@ -178,12 +189,23 @@ app.post("/urls", (req, res) => {
 
 
 
-
+/////////////////////////////////////////////////////////////////////
 
 app.get("/urls/new", (req, res) => {
   let userId = res.cookie('user_id');
+  // console.log(userId);
+
   let templateVars = { user: users[req.cookies.userId] };
-  res.render("urls_new", templateVars);
+  //console.log(templateVars);
+  if (req.cookies.user_id) {
+    console.log("cookie exists");
+    res.render("urls_new", templateVars);
+  } else {
+    //console.log("no cookie found");
+    res.redirect('/register');
+  }
+  //console.log(req.cookies);
+
 });
 
 
@@ -245,20 +267,21 @@ app.post("/urls/:id", (req, res) => {
 
 
 
-
+//This is my login page
 
 app.post("/login", (req, res) => {
   var loginEmail = req.body.email;
   var loginPassword = req.body.password;
   const userLogin = checkLogin(loginEmail, loginPassword);
 
+ //check if both email and password fields are submitted
 
   if (userLogin) {
     res.cookie('user_id', userLogin.id);
     res.redirect('/urls/');
   } else {
     res.status(403);
-    res.send("you have the wrong credentials");
+    res.send("Enter a valid email address and password");
   }
 
   // app.post("/login", (req, res) => {
