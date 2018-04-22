@@ -5,7 +5,7 @@ const PORT = process.env.PORT || 8080;
 app.set("view engine", "ejs");
 
 const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const cookieSession = require('cookie-session');
 app.use(cookieSession({
@@ -14,25 +14,25 @@ app.use(cookieSession({
 }));
 
 const bcryptjs = require('bcryptjs');
-const password = "purple"; // you will probably this from req.params
+const password = "purple";
 const hashedPassword = bcryptjs.hashSync(password, 10);
 
 const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: bcryptjs.hashSync('password', 10)
+    password: "avocado"
   },
- "user2RandomID": {
+  "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: bcryptjs.hashSync('password', 10)
+    password: "pineapple"
   }
 }
 
 const urlDatabase = {
-  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", linkid: 'userRandomID'},
-  '9sm5xK': { longURL: "http://www.google.com", linkid: 'userRandomID'}
+  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", linkid: 'userRandomID' },
+  '9sm5xK': { longURL: "http://www.google.com", linkid: 'userRandomID' }
 };
 
 const alphanum = "abcdefghijkmnopqrstuvwxyz1234567890";
@@ -41,28 +41,12 @@ function generateRandomString() {
   let result = "";
   for (let i = 0; i < 6; i++) {
     let index = Math.floor(Math.random() * alphanum.length);
-    //music library instead of for loop
-    //generates a uniqueID
-    //fuction generateRandomString() {
-    //return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-    //}
     result += alphanum[index];
   }
   return result;
 }
 
-// Registration email exists checker
-const regChecker = (email, password) => {
-  if (password === undefined) {
-    for (randId in users) {
-      if (users[randId].email === email){
-        return true;
-      }
-    } return false;
-  }
-};
-
-// This checks if the current userid (from the cookie) matches with the database
+// This function expression checks if the currentUserid (from the cookie) matches with the userid from the database
 const userChecker = (currentUser) => {
   for (let user in users) {
     if (user === currentUser) {
@@ -72,8 +56,8 @@ const userChecker = (currentUser) => {
 };
 
 
-app.get("/", (req, res) => {
-  let templateVars = { url: urlDatabase, username: users[req.session.user_id]};
+app.get("/urls", (req, res) => {
+  let templateVars = { url: urlDatabase, username: users[req.session.user_id] };
   if (userChecker(req.session.user_id)) {
     res.render('urls_index', templateVars);
   } else {
@@ -83,15 +67,19 @@ app.get("/", (req, res) => {
 
 
 app.get('/login', (req, res) => {
-  res.redirect('/');
+  let templateVars = {
+    username: users[req.session.user_id],
+    users: users
+  };
+  res.render('login', templateVars);
 });
 
 
 app.get('/urls', (req, res) => {
   if (userChecker(req.session.user_id)) {
     let subset = {};
-    for (let link in urlDatabase){
-      if (urlDatabase[link].linkid === req.session.user_id){
+    for (let link in urlDatabase) {
+      if (urlDatabase[link].linkid === req.session.user_id) {
         subset[link] = urlDatabase[link];
       }
     }
@@ -106,12 +94,12 @@ app.get('/urls', (req, res) => {
   }
 });
 
-// New Link Page
+// Get new links
 app.get('/urls/new', (req, res) => {
   if (userChecker(req.session.user_id)) {
     let subset = {};
-    for (let link in urlDatabase){
-      if (urlDatabase[link].linkid === req.session.user_id){
+    for (let link in urlDatabase) {
+      if (urlDatabase[link].linkid === req.session.user_id) {
         subset[link] = urlDatabase[link];
       }
     }
@@ -152,7 +140,7 @@ app.get('/urls/:id', (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  if(!urlDatabase[req.params.shortURL]) {
+  if (!urlDatabase[req.params.shortURL]) {
     res.status(404);
     res.send('Error: 404');
   }
@@ -161,9 +149,9 @@ app.get("/u/:shortURL", (req, res) => {
 
 
 app.get('/register', (req, res) => {
-  if (userChecker(req.session.user_id)){
-    res.redirect('/');
-  } res.render('register');
+  let templateVars = { url: urlDatabase, username: users[req.session.user_id] };
+  res.render('register', templateVars);
+  res.redirect('/urls');
 });
 
 
@@ -215,33 +203,52 @@ app.post("/urls/:id", (req, res) => {
 
 
 app.post("/login", (req, res) => {
-  // email-password checker
-  for (user in users) {
-    if (users[user].email === req.body.email && bcryptjs.compareSync(req.body.password, users[user].password)) {
-      req.session.user_id = users[user].id;
-      res.redirect('/urls');
-      return;
+  // check if the e-mail and passwords match and user emails match
+  let verifiedId = "";
+  for (let user in users) {
+    let userPassword = bcryptjs.compareSync(req.body.password, users[user].password);
+    if (users[user].email === req.body.email) {
+      verifiedId = users[user].id;
     }
   }
-  res.status(401);
-  res.send('Username and password does not match.');
+    if (users[verifiedId].password === req.body.password) {
+      req.session.user_id = verifiedId;
+    }
+
+    else {
+      // console.log(user);
+      res.status(401);
+      res.send('Invalid input.');
+      return;
+  }
+  res.redirect('/urls');
 });
 
 app.post('/logout', (req, res) => {
   req.session.user_id = null;
-  res.redirect('/');
+  res.redirect('/urls');
 });
 
 
 app.post('/register', (req, res) => {
-  // checks if email or password is empty
+  // check if email or password is empty
+  //console.log(req.body.email); === test
   if (req.body.email === '' || req.body.password === '') {
     res.status(400);
     res.send('Email or password empty.')
+    return;
+  }
+  //now we're checking all the users we have -- does any of them match req.body.email
+  for (user in users) {
+    if (users[user].email === req.body.email) {
+      //console.log ("match", req.body.email);
+      res.send("Email already in use.")
+    }
+  }
 
-  } else if (regChecker(req.body.email)) {
-    res.status(400);
-    res.send('Email already logged in database.');
+  if (req.body.email === undefined || req.body.email === "") {
+    console.log("empty");
+
 
   } else {
     // add a new user to dabatase
@@ -254,6 +261,7 @@ app.post('/register', (req, res) => {
     req.session.user_id = newUserId;
     res.redirect('/urls');
   }
+
 });
 
 

@@ -9,11 +9,11 @@
     <p>
       <ul>
         <% for(let key in url) { %>
-      <li><%= key %> <%= url[key].url %></li>
+        <% if (url[key].linkid === username.id) { %>
+          <li><%= key %> <%= url[key].url %></li>
 
-        <% if (user && url[key].linkid === username.id) { %>
           <form action="/urls/<%= key  %>" method="POST">
-            <input id="newURL" type="text" name="newURL" value="<%= url[key].longURL %>">
+            <input readonly id="newURL" type="text" name="newURL" value="<%= url[key].longURL %>"> : <a href = '<%= url[key].longURL %>'> Visit the site </a>
           </form>
 
             <form action="/urls/<%= key %>/delete" method="POST">
@@ -21,9 +21,9 @@
               <a href="/urls/<%= key %>"> Edit </a>
             </form>
 
-          <% } %>
-         <% } %>
+        <% } %>
+        <% } %>
       </ul>
-      </p>
+    </p>
       <a href = "/urls/new"> Want to shorten a new URL? </a>
-    </body>
+  </body>

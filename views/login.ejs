@@ -3,19 +3,19 @@
   <title>Tiny App</title>
 </head>
 <h1 style="color: blue; font-size: 30px;"> Tiny App </h1>
-<body>
+  <body>
+    <!-- username <%= users[username]%> <%= users[username]%> -->
+    <% if (username) { %>
+    <!-- <%= username.id %> -->
+      <form method="POST" action="/logout">
+      <button type="submit">Logout</button> </form>
+    <% } else { %>
 
-  <% if (user) { %>
-  <%= username.id %>
-    <form method="POST" action="/logout">
-    <button type="submit">Logout</button> </form>
+      <form method="POST" action="/login">
+      Email: <input type="email" name="email">
+      Password: <input type="password" name="password">
+      <button type="submit">Login</button>
 
-      <% } else { %>
-    <form method="POST" action="/login">
-    <input type="text" placeholder="Enter Email" name="email">
-    <input type="password" placeholder="Enter Password" name="password">
-    <button type="submit">Login</button>
-
-    </form>
+      </form>
   </body>
-  <% } %>
+    <% } %>

@@ -1,19 +1,16 @@
- <nav>
+  <nav>
     <h1 style="color: blue; font-size: 30px;"> Tiny App </h1>
   </nav>
 
   <header>
-  <% if (username) { %>
-  <%= username.email %>
+    <% if (username) { %>
+    <%= username.email %>
   </header>
 
-  <form action="/urls" method="POST">
-    <input name="longURL" placeholder="Add a new url:">
-  </form>
 
   <form action="/logout" method='POST'>
-      <input value='Logout' type='submit'>
-    </form>
+    <input value='Logout' type='submit'>
+  </form>
 
   <% } else { %>
 
@@ -23,4 +20,4 @@
       <input value="Login" type="submit" name="Submit">
       <a href="/register"><input type="button" value="Register"></a>
     </form>
-<% } %>
+  <% } %>
