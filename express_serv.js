@@ -211,18 +211,17 @@ app.post("/login", (req, res) => {
       verifiedId = users[user].id;
     }
   }
-    if (users[verifiedId].password === req.body.password) {
-      req.session.user_id = verifiedId;
-    }
-
-    else {
+    if (verifiedId === "") {
       // console.log(user);
       res.status(401);
       res.send('Invalid input.');
       return;
-  }
+  } else {
+  req.session.user_id = verifiedId;
   res.redirect('/urls');
+  }
 });
+
 
 app.post('/logout', (req, res) => {
   req.session.user_id = null;
