@@ -46,7 +46,7 @@ function generateRandomString() {
   return result;
 }
 
-// This function expression checks if the currentUserid (from the cookie) matches with the userid from the database
+// This function expression checks if the currentUserid matches with the userid from the database
 const userChecker = (currentUser) => {
   for (let user in users) {
     if (user === currentUser) {
