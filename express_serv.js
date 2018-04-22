@@ -161,7 +161,7 @@ app.post("/urls/:id/delete", (req, res) => {
     res.redirect('/urls');
   } else {
     res.status(403);
-    res.send('403: You are not allowed to delete this');
+    res.send('403: You cannot delete this.');
   }
 });
 
@@ -212,7 +212,6 @@ app.post("/login", (req, res) => {
     }
   }
     if (verifiedId === "") {
-      // console.log(user);
       res.status(401);
       res.send('Invalid input.');
       return;
